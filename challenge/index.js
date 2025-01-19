@@ -4,7 +4,7 @@ const readlineSync = require('readline-sync');
 
 // Open AI configuration
 const openai = new OpenAI({
-  apiKey: "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",
+  apiKey: "",
 });
 
 // Get user input
@@ -33,7 +33,7 @@ async function runConversation() {
       console.log("Goodbye!");
       process.exit();
     }
-    messages.push({"role": "user", "content": input});
+    messages.push({ "role": "user", "content": input });
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,

@@ -27,7 +27,7 @@ async function runConversation() {
   //let messages = [{ role: "system", content: "You are a funny assistant." }];
   //let messages = [{ role: "system", content: "You are a helpful assistant." }];
   const chatPrompts = [
-    { role: "system", content: "You are a helpful assistant." }
+    { role: "system", content: "You are a funny assistant." }
   ];
 
   while (true) {

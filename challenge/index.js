@@ -2,7 +2,8 @@
 //const OpenAI = require('openai');
 import { configDotenv } from 'dotenv';
 import OpenAI from 'openai/index.mjs';
-const readlineSync = require('readline-sync');
+//const readlineSync = require('readline-sync');
+import readlineSync from 'readline-sync';
 
 // Open AI configuration
 /* const openai = new OpenAI({
@@ -32,10 +33,13 @@ async function runConversation() {
 
   //let messages = [{ role: "system", content: "You are a funny assistant." }];
   //let messages = [{ role: "system", content: "You are a helpful assistant." }];
+  const chatPrompts = [
+    { role: "system", content: "You are a helpful assistant." }
+  ];
 
   while (true) {
-    const input = getInput('You: ');
-    if (input === 'x') {
+    const userInput = getInput('You: ');
+    if (userInput === 'x') {
       console.log("Goodbye!");
       process.exit();
     }
@@ -50,7 +54,7 @@ async function runConversation() {
     // messages.push(completion.choices[0].message.content); */
 
     // EXAMPLE PROVENANT DU SITE OPENAI
-    const completion = await openai.chat.completions.create({
+    /* const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: "You are a helpful assistant." },
@@ -61,8 +65,18 @@ async function runConversation() {
       ],
       store: true,
     });
-    console.log(completion.choices[0].message);
+    console.log(completion.choices[0].message); */
 
+    chatPrompts.push({
+      "role": "user",
+      content: userInput
+    });
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: chatPrompts
+    });
+    chatPrompts.push(completion.choices[0].message);
+    console.log(completion.choices[0].message);
   }
 }
 

@@ -3,6 +3,11 @@ import OpenAI from 'openai/index.mjs';
 import readlineSync from 'readline-sync';
 
 // Open AI configuration
+//const kMODEL_ENGINE = "gpt-3.5-turbo-0125";
+const kMODEL_ENGINE = "gpt-4o-mini";
+const kSYSTEM_ROLE = "You are a funny assistant.";
+//const kSYSTEM_ROLE = "You are a helpful assistant.";
+
 const openai = new OpenAI({
   apiKey: process.env.GENAICURSUSKEY,
 });
@@ -19,15 +24,14 @@ async function main() {
   console.log('          CHAT WITH AI 🤖   ');
   console.log('----------------------------------\n');
   console.log("type 'x' to exit the conversation");
+  console.log("MODEL:", kMODEL_ENGINE, " / ROLE:", kSYSTEM_ROLE);
   await runConversation();
 }
 
 async function runConversation() {
 
-  //let messages = [{ role: "system", content: "You are a funny assistant." }];
-  //let messages = [{ role: "system", content: "You are a helpful assistant." }];
   const chatPrompts = [
-    { role: "system", content: "You are a funny assistant." }
+    { role: "system", content: kSYSTEM_ROLE }
   ];
 
   while (true) {
@@ -36,36 +40,12 @@ async function runConversation() {
       console.log("Goodbye!");
       process.exit();
     }
-
-    // EXAMPLE PROVENANT DE L'EXERCICE PRÉCÉDENT
-    /* messages.push({ "role": "user", "content": input });
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: messages,
-    });
-    console.log(completion.choices[0].message.content);
-    // messages.push(completion.choices[0].message.content); */
-
-    // EXAMPLE PROVENANT DU SITE OPENAI
-    /* const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        {
-          role: "user",
-          content: "Write a haiku about recursion in programming.",
-        },
-      ],
-      store: true,
-    });
-    console.log(completion.choices[0].message); */
-
     chatPrompts.push({
       "role": "user",
       content: userInput
     });
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: kMODEL_ENGINE,
       messages: chatPrompts
     });
     chatPrompts.push(completion.choices[0].message);

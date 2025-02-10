@@ -1,18 +1,11 @@
-//require('dotenv').config();
-//const OpenAI = require('openai');
-import { configDotenv } from 'dotenv';
+import 'dotenv/config';
 import OpenAI from 'openai/index.mjs';
-//const readlineSync = require('readline-sync');
 import readlineSync from 'readline-sync';
 
 // Open AI configuration
-/* const openai = new OpenAI({
-  apiKey: process.env.GENAICURSUSKEY,
-}); */
 const openai = new OpenAI({
-  apiKey: process.env.GENAICURSUSKEY
+  apiKey: process.env.GENAICURSUSKEY,
 });
-// const openai = new OpenAI();
 
 // Get user input
 function getInput(promptMessage) {

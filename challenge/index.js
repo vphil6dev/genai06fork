@@ -9,10 +9,10 @@ import readlineSync from 'readline-sync';
 /* const openai = new OpenAI({
   apiKey: process.env.GENAICURSUSKEY,
 }); */
-/* const openai = new OpenAI({
-  apiKey: configDotenv({ DOTENV_KEY: 'GENAICURSUSKEY'})
-}); */
-const openai = new OpenAI();
+const openai = new OpenAI({
+  apiKey: process.env.GENAICURSUSKEY
+});
+// const openai = new OpenAI();
 
 // Get user input
 function getInput(promptMessage) {

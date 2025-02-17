@@ -96,11 +96,12 @@ async function runConversation() {
     //queryMessages.push(responseMessage);
     console.log(responseMessage);
 
-    // EST-CE QUE LE MODÈLE A BESOIN D'UTILISER UNE (OU PLUSIEURS) FONCTION EXTERNE ?
+    // LE MODÈLE VEUT-IL UTILISER UNE FONCTION EXTERNE ? (OU PLUSIEURS)
     const toolsCalls = responseMessage.tool_calls;
     console.log('External tools call: ', toolsCalls.length > 0);
     console.log(toolsCalls);
     if (toolsCalls) {
+      // INCLURE LA REPONSE QUI CONTIENT LES FONCTIONS À APPELER
       queryMessages.push(responseMessage);
       for (const toolCall of toolsCalls) {
         const functionName = toolCall.function.name;

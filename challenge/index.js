@@ -30,7 +30,7 @@ async function main() {
 
 async function runConversation() {
 
-  const chatPrompts = [
+  const queryMessages = [
     { role: "system", content: kSYSTEM_ROLE }
   ];
 
@@ -40,16 +40,17 @@ async function runConversation() {
       console.log("Goodbye!");
       process.exit();
     }
-    chatPrompts.push({
+    queryMessages.push({
       "role": "user",
       content: userInput
     });
-    const completion = await openai.chat.completions.create({
+    const response = await openai.chat.completions.create({
       model: kMODEL_ENGINE,
-      messages: chatPrompts
+      messages: queryMessages
     });
-    chatPrompts.push(completion.choices[0].message);
-    console.log(completion.choices[0].message);
+    const responseMessage = response.choices[0].message;
+    queryMessages.push(responseMessage);
+    console.log(responseMessage);
   }
 }
 

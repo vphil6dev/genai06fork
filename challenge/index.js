@@ -19,6 +19,19 @@ function getInput(promptMessage) {
   });
 }
 
+// FONCTION BIDON POUR RETOURNER LES PRÉVISIONS MÉTÉO
+function getCurrentWeather(location, unit = "celsius") {
+  if (location.toLowerCase().includes("brussels")) {
+    return JSON.stringify({ location: "Brussels", temperature: "18", unit: "celsius" });
+  } else if (location.toLowerCase().includes("san francisco")) {
+    return JSON.stringify({ location: "San Francisco", temperature: "72", unit: "fahrenheit" });
+  } else if (location.toLowerCase().includes("paris")) {
+    return JSON.stringify({ location: "Paris", temperature: "22", unit: "celsius" });
+  } else {
+    return JSON.stringify({ location, temperature: "unknown" });
+  }
+}
+
 async function main() {
   console.log('\n\n----------------------------------');
   console.log('          CHAT WITH AI 🤖   ');
@@ -30,9 +43,35 @@ async function main() {
 
 async function runConversation() {
 
-  const queryMessages = [
+  /* const queryMessages = [
     { role: "system", content: kSYSTEM_ROLE }
+  ]; */
+
+  // FONCTIONS QUI PEUVENT ÊTRE APPELÉES PAR LE MODÈLE
+  const externalTools = [
+    {
+      type: "function",
+      function: {
+        name: "get_current_weather",
+        description: "Get the current weather in a given location",
+        parameters: {
+          type: "object",
+          properties: {
+            location: {
+              type: "string",
+              description: "The city and state, e.g. San Francisco, CA",
+            },
+            unit: { type: "string", enum: ["celsius", "fahrenheit"] },
+          },
+          required: ["location"],
+        },
+      },
+    },
   ];
+
+  const availableFunctions = {
+    get_current_weather: getCurrentWeather,
+  };
 
   while (true) {
     const userInput = getInput('You: ');
@@ -40,17 +79,46 @@ async function runConversation() {
       console.log("Goodbye!");
       process.exit();
     }
+    const queryMessages = [
+      { role: "system", content: kSYSTEM_ROLE }
+    ];
+
     queryMessages.push({
       "role": "user",
       content: userInput
     });
     const response = await openai.chat.completions.create({
       model: kMODEL_ENGINE,
-      messages: queryMessages
+      messages: queryMessages,
+      tools: externalTools
     });
     const responseMessage = response.choices[0].message;
-    queryMessages.push(responseMessage);
+    //queryMessages.push(responseMessage);
     console.log(responseMessage);
+
+    // EST-CE QUE LE MODÈLE A BESOIN D'UTILISER UNE (OU PLUSIEURS) FONCTION EXTERNE ?
+    const toolsCalls = responseMessage.tool_calls;
+    console.log('External tools call: ', toolsCalls.length > 0);
+    console.log(toolsCalls);
+    if (toolsCalls) {
+      queryMessages.push(responseMessage);
+      for (const toolCall of toolsCalls) {
+        const functionName = toolCall.function.name;
+        const functionToCall = availableFunctions[functionName];
+        const functionArgs = JSON.parse(toolCall.function.arguments);
+        const functionResponse = functionToCall(
+          functionArgs.location,
+          functionArgs.unit
+        );
+        console.log(functionResponse)
+        // messages.push({
+        //   tool_call_id: toolCall.id,
+        //   role: "tool",
+        //   name: functionName,
+        //   content: functionResponse,
+        // }); // extend conversation with function response
+      }
+    }
   }
 }
 
